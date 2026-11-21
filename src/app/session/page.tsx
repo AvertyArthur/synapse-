@@ -95,9 +95,11 @@ function Session() {
 }
 
 function SourceLink({ card }: { card: StudyCard }) {
+  const [missing, setMissing] = useState(false);
   if (!card.sourcePage) return null;
+  if (missing) return <p className="min-h-11 py-3 text-[13px] text-muted">Tiré de la page {card.sourcePage} du cours (original absent de cet appareil).</p>;
   return (
-    <button type="button" onClick={() => openSource(card.courseId, card.sourcePage!)} className="inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-teal">
+    <button type="button" onClick={async () => setMissing(!(await openSource(card.courseId, card.sourcePage!)))} className="inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-teal">
       <ExternalIcon size={15} /> Voir dans le cours, page {card.sourcePage}
     </button>
   );

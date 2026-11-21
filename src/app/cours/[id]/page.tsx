@@ -7,6 +7,7 @@ import { Suspense, useEffect, useState } from "react";
 import { db, deleteCourse } from "@/lib/db";
 import { mastery } from "@/lib/srs";
 import { openSource } from "@/lib/source";
+import { IS_DEMO } from "@/lib/demo";
 import Markdown from "@/components/Markdown";
 import { Card, Meter, Page, btn } from "@/components/ui";
 import { ExternalIcon, PencilIcon, PrintIcon, TrashIcon } from "@/components/Icons";
@@ -30,6 +31,7 @@ function CoursePage() {
   const chapters = useLiveQuery(() => db.chapters.where("courseId").equals(id).sortBy("order"), [id]);
   const cards = useLiveQuery(() => db.cards.where("courseId").equals(id).toArray(), [id]);
   const [tab, setTab] = useState<Tab>("fiches");
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const page = search.get("page");
 
   useEffect(() => {
@@ -90,7 +92,9 @@ function CoursePage() {
       {course.status === "active" && (
         <div className="no-print flex flex-wrap gap-2">
           <Link href={`/session?course=${id}`} className={btn.teal}>Réviser ce cours</Link>
-          <button type="button" className={btn.ghost} onClick={() => window.print()}><PrintIcon size={18} /> Imprimer les fiches</button>
+          {!IS_DEMO && (
+            <button type="button" className={btn.ghost} onClick={() => window.print()}><PrintIcon size={18} /> Imprimer les fiches</button>
+          )}
           <button type="button" className={btn.ghost} onClick={() => db.courses.update(id, { status: "ready" })}>Mettre en pause</button>
         </div>
       )}
@@ -148,18 +152,26 @@ function CoursePage() {
       )}
 
       <div className="no-print mt-4 border-t border-line pt-4">
-        <button
-          type="button"
-          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-rose-700"
-          onClick={async () => {
-            if (confirm("Supprimer ce cours, ses cartes et son historique ?")) {
-              await deleteCourse(id);
-              router.push("/cours");
-            }
-          }}
-        >
-          <TrashIcon size={16} /> Supprimer ce cours
-        </button>
+        {!confirmDelete ? (
+          <button type="button" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-rose-700" onClick={() => setConfirmDelete(true)}>
+            <TrashIcon size={16} /> Supprimer ce cours
+          </button>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2 rounded-xl bg-rose-50 p-3">
+            <span className="text-sm">Supprimer ce cours, ses cartes et son historique ?</span>
+            <button
+              type="button"
+              className="inline-flex min-h-11 items-center rounded-xl bg-rose-700 px-4 text-sm font-semibold text-white"
+              onClick={async () => {
+                await deleteCourse(id);
+                router.push("/cours");
+              }}
+            >
+              Supprimer
+            </button>
+            <button type="button" className={btn.ghost} onClick={() => setConfirmDelete(false)}>Annuler</button>
+          </div>
+        )}
       </div>
     </Page>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { db, uid } from "./db";
+import { IS_DEMO } from "./demo";
 import { newFsrsCard } from "./srs";
 import type { Generation } from "./generation-schema";
 import type { Chapter, Course, StudyCard } from "./types";
@@ -46,6 +47,9 @@ export const ACCEPTED = ".pdf,.png,.jpg,.jpeg,.webp,.txt,.md,application/pdf,ima
 
 /** Crée le cours, extrait le texte, appelle l'IA et enregistre le kit. Renvoie l'id du cours. */
 export async function ingestFile(file: File, meta: { ue: string; semester: string }) {
+  if (IS_DEMO) {
+    throw new Error("Dans cette démo, l'IA n'est pas branchée : l'import de vrais cours marche dans la version en ligne. Essaie le cours d'exemple.");
+  }
   const mediaType = guessMediaType(file);
   const courseId = uid();
   const course: Course = {

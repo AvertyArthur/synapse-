@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { IS_DEMO } from "@/lib/demo";
 import { BookIcon, CardsIcon, ChartIcon, GearIcon, HomeIcon } from "./Icons";
 
 const NAV = [
@@ -18,7 +19,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const immersive = pathname.startsWith("/session");
 
   useEffect(() => {
-    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+    if ("serviceWorker" in navigator && process.env.NODE_ENV === "production" && !IS_DEMO) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }, []);

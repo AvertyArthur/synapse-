@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { db, exportBackup, importBackup, localDay, saveProfile, uid } from "@/lib/db";
 import { jokersLeft } from "@/lib/gamification";
 import { useProfile } from "@/lib/hooks";
+import { IS_DEMO } from "@/lib/demo";
 import { Card, Page, PageHeader, btn } from "@/components/ui";
 import { TrashIcon } from "@/components/Icons";
 
@@ -133,7 +134,7 @@ export default function ReglagesPage() {
         </button>
       </Card>
 
-      <Card className="flex flex-col gap-3">
+      {!IS_DEMO && <Card className="flex flex-col gap-3">
         <h2 className="font-bold">Sauvegarde</h2>
         <p className="text-sm text-muted">Tout est enregistré sur cet appareil. Exporte une sauvegarde de temps en temps, ou pour passer sur un autre appareil (les PDF originaux ne sont pas inclus).</p>
         <div className="flex flex-wrap gap-2">
@@ -171,7 +172,7 @@ export default function ReglagesPage() {
           />
         </div>
         {notice && <p role="status" className="text-sm font-semibold text-teal">{notice}</p>}
-      </Card>
+      </Card>}
     </Page>
   );
 }

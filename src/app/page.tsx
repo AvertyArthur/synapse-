@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useMemo, useState } from "react";
 import { db, localDay, saveProfile } from "@/lib/db";
+import { IS_DEMO } from "@/lib/demo";
+import { loadSample } from "@/lib/sample";
 import { computeStreak, greeting } from "@/lib/gamification";
 import { useProfile, useSessionPlan } from "@/lib/hooks";
 import { mastery } from "@/lib/srs";
@@ -182,7 +184,13 @@ function Welcome({ defaultName }: { defaultName: string }) {
         <button
           type="button"
           className={btn.primary}
-          onClick={() => saveProfile({ firstName: name.trim() || "Jade", dailyMinutes: minutes, newCardsPerDay: Math.round(minutes * 0.7), onboarded: true })}
+          onClick={async () => {
+            if (IS_DEMO && (await db.courses.count()) === 0) {
+              const id = await loadSample();
+              await db.courses.update(id, { status: "active" });
+            }
+            await saveProfile({ firstName: name.trim() || "Jade", dailyMinutes: minutes, newCardsPerDay: Math.round(minutes * 0.7), onboarded: true });
+          }}
         >
           C&apos;est parti
         </button>

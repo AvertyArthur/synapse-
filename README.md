@@ -49,3 +49,7 @@ La génération d'un cours prend 1 à 3 minutes : la route `/api/generate` deman
 ## Pour la suite
 
 Dossiers cliniques progressifs, schémas à légender, planning jusqu'au jour J, tuteur IA sur les cours, synchronisation entre appareils (Supabase), export Anki.
+
+## Démo sans serveur
+
+`npm run build:demo` produit `dist-demo/index.html`, un seul fichier qui contient toute l'app avec le cours d'exemple, sans génération IA ni impression. Pratique pour la faire essayer sans rien installer.
